@@ -1,5 +1,7 @@
 from decouple import config
 
+AUTH_USER_MODEL = 'auth_app.User'
+
 """
 
 Django settings for milk_adulteration_project project.
@@ -40,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
     'auth_app',
     'analysis',
     'prediction',
