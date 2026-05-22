@@ -6,6 +6,8 @@ from .models import AnalysisResult
 from .serializers import AnalysisResultSerializer
 from sensors.serializers import MilkDataSerializer
 from alerts.models import Alert
+# Corrected import path to match your file structure
+from sensors.ml_service import predict_milk_quality
 
 class AnalyzeMilkView(APIView):
     """
@@ -21,32 +23,33 @@ class AnalyzeMilkView(APIView):
         
         milk_data = milk_data_serializer.save()
         
-        # 2. PLACEHOLDER ML INFERENCE
-        # Replace this block later with your actual ML model logic 
-        if milk_data.ph < 6.4 or milk_data.ph > 6.8 or milk_data.turbidity > 50:
-            result_status = 'BAD'
-            adulteration_type = 'Water' if milk_data.turbidity > 60 else 'Urea'
-            percentage = 18.0
-            reasons = 'Abnormal pH or High Turbidity detected.'
-        else:
-            result_status = 'GOOD'
-            adulteration_type = None
-            percentage = 0.0
-            reasons = 'All parameters are within normal range.'
-        # END OF PLACEHOLDER
+        # 2. ML INFERENCE
+        try:
+            # Pass all 7 features to the prediction function in the correct order
+            ml_results = predict_milk_quality(
+                ph=milk_data.ph,
+                temperature=milk_data.temperature,
+                taste=milk_data.taste,
+                odor=milk_data.odor,
+                fat=milk_data.fat,
+                turbidity=milk_data.turbidity,
+                colour=milk_data.colour
+            )
+        except Exception as e:
+            return Response({"error": f"ML Prediction failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         # 3. Save the findings
         analysis = AnalysisResult.objects.create(
             milk_data=milk_data,
-            status=result_status,
-            adulteration_type=adulteration_type,
-            percentage=percentage,
-            reasons=reasons
+            status=ml_results['status'],
+            adulteration_type=ml_results['adulteration_type'],
+            percentage=ml_results['percentage'],
+            reasons=ml_results['reasons']
         )
         
         # 4. Trigger alert automatically if BAD
-        if result_status == 'BAD':
-            msg = f"Adulterated milk detected! Type: {adulteration_type}, Percentage: {percentage}%"
+        if ml_results['status'] == 'BAD':
+            msg = f"Adulterated milk detected! Type: {ml_results['adulteration_type']}, Percentage: {ml_results['percentage']}%"
             Alert.objects.create(message=msg, severity='HIGH')
             
         return Response(AnalysisResultSerializer(analysis).data, status=status.HTTP_201_CREATED)
