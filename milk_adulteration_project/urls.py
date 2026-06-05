@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/predictions/', include('prediction.urls')),
     path('api/alerts/', include('alerts.urls')),
     path('api/inventory/', include('inventory.urls')),
+    path('api/notifications/', include('notifications.urls')),
     path('api/dashboard/', include('dashboard.urls')),
 ]
