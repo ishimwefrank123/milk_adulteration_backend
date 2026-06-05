@@ -1,0 +1,19 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env.*
+*.sqlite3
+*.db
+# VS Code
+.vscode/
+# Byte-compiled / optimized / DLL files
+*.so
+*.dylib
+# Logs
+*.log
+# Django stuff:
+*.pot
+*.pyc
