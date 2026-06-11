@@ -10,6 +10,8 @@ class User(AbstractUser):
     
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default='SUPPLIER')
+    location = models.CharField(max_length=100, blank=True, null=True)
+    cooperative_center = models.CharField(max_length=100, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']  # Django still needs username internally
