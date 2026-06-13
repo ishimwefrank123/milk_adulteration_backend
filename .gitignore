@@ -1,6 +1,8 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 
 # Virtual Environment
 venv/
@@ -9,18 +11,27 @@ env/
 
 # Django
 db.sqlite3
+*.sqlite3
+*.db
 media/
 staticfiles/
+*.pot
+*.pyc
 
 # Environment Variables
 .env
+.env.*
+*.env
 
 # Logs
 *.log
 
-# VS Code
+# IDEs
 .vscode/
-
-# PyCharm
 .idea/
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dylib
+
 test_api.html

@@ -7,12 +7,12 @@ from .serializers import MilkDataSerializer
 from prediction.ml_service import predict_milk_quality
 
 
-class MilkDataCreateView(generics.CreateAPIView):
+class MilkDataCreateView(generics.ListCreateAPIView):
     """
+    GET  /api/sensors/data/
     POST /api/sensors/data/
     """
-
-    queryset = MilkData.objects.all()
+    queryset = MilkData.objects.all().order_by('-timestamp')
     serializer_class = MilkDataSerializer
     permission_classes = [IsAuthenticated]
 
