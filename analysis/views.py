@@ -8,9 +8,6 @@ from .serializers import AnalysisResultSerializer
 from sensors.serializers import MilkDataSerializer
 from sensors.ml_service import predict_milk_quality
 from alerts.models import Alert
-from prediction.ml_service import predict_milk_quality
-# Corrected import path to match your file structure
-
 
 
 class AnalysisResultListView(generics.ListAPIView):
@@ -102,9 +99,15 @@ class AnalyzeMilkView(APIView):
             reasons=ml_results['reasons']
         )
         
-        # 4. Trigger alert automatically if ADULTERATED
-        if ml_results['status'] == 'ADULTERATED':
-            msg = f"Adulterated milk detected! Type: {ml_results['adulteration_type']}, Percentage: {ml_results['percentage']}%"
+        # 4. Trigger alert automatically
+        if ml_results['status'] == 'BAD':
+            msg = f"Adulterated milk detected! Type: {ml_results['adulteration_type'] or 'Unknown'}, Percentage: {ml_results['percentage']}%. Reasons: {ml_results['reasons']}"
             Alert.objects.create(message=msg, severity='HIGH')
+        else:
+            msg = f"Pure milk recorded! Quality is good. Reasons: {ml_results['reasons']}"
+            Alert.objects.create(message=msg, severity='LOW')
+            
+        from notifications.models import Notification
+        Notification.objects.create(user=request.user, message=msg)
             
         return Response(AnalysisResultSerializer(analysis).data, status=status.HTTP_201_CREATED)

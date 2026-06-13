@@ -37,8 +37,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='milkdata',
-<<<<<<< HEAD
-=======
             name='ph',
             field=models.FloatField(default=0.0),
         ),
@@ -49,7 +47,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='milkdata',
->>>>>>> f8591ab (Add backend sensor model, migration and demo files)
             name='turbidity',
             field=models.FloatField(default=0.0),
         ),
