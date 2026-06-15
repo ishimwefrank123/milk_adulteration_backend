@@ -111,7 +111,7 @@ def predict_milk_quality(
     if prediction == 1:
 
         return {
-            "status": "PURE",
+            "status": "GOOD",
             "confidence": round(confidence, 2),
             "adulteration_type": None,
             "percentage": 0.0,
@@ -142,7 +142,7 @@ def predict_milk_quality(
     percentage = max(0.0, percentage)
 
     return {
-        "status": "ADULTERATED",
+        "status": "BAD",
         "confidence": round(confidence, 2),
         "adulteration_type": adulteration_type,
         "percentage": round(percentage, 2),

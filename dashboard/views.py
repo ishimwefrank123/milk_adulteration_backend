@@ -35,7 +35,7 @@ class DashboardSummaryView(APIView):
                 'created_at': r.created_at,
                 'ph': r.milk_data.ph if r.milk_data else None,
                 'temperature': r.milk_data.temperature if r.milk_data else None,
-                'gas': r.milk_data.gas if r.milk_data else None,
+                'odor': r.milk_data.odor if r.milk_data else None,
                 'turbidity': r.milk_data.turbidity if r.milk_data else None,
             })
 

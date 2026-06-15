@@ -2,11 +2,11 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import AnalysisResult
 from .serializers import AnalysisResultSerializer
 from sensors.serializers import MilkDataSerializer
-from sensors.ml_service import predict_milk_quality
+from prediction.ml_service import predict_milk_quality
 from alerts.models import Alert
 
 
@@ -65,7 +65,7 @@ class AnalyzeMilkView(APIView):
     Accepts: ph, temperature, taste, odor, fat, turbidity, colour
     Runs XGBoost ML model and returns: status, adulteration_type, percentage, reasons
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny] # Allow unauthenticated hardware simulations to post data
 
     def post(self, request):
         # 1. Validate and save sensor data
@@ -108,6 +108,11 @@ class AnalyzeMilkView(APIView):
             Alert.objects.create(message=msg, severity='LOW')
             
         from notifications.models import Notification
-        Notification.objects.create(user=request.user, message=msg)
+        from django.contrib.auth import get_user_model
+        
+        User = get_user_model()
+        sellers = User.objects.filter(role='SELLER')
+        for seller in sellers:
+            Notification.objects.create(user=seller, message=msg)
             
         return Response(AnalysisResultSerializer(analysis).data, status=status.HTTP_201_CREATED)
